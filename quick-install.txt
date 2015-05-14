@@ -1,0 +1,41 @@
+* How to install 4gl-zabbix-mon v0.3
+
+1.a requirements
+
+- Zabbix server version 2.0+
+- monitored PostgreSQL  9.2+
+- monitored pgpool-II   3.4.0
+- installing zabbix_agentd to PostgreSQL.
+- ServerActive setting in zabbix_agentd.conf 
+- _progress command(and serch path setting)
+
+
+1.b Structure of a package: 
+    template/Template_App_ProgressDB.xml - template for zabbix
+    vst/db_vst.p - Programm 4GL for collecting statistics
+    vst/
+    zabbix_agentd.d/userparameter_progressdb.conf - user parameter ProgressDB for Zabbix clients
+
+2.  Install scripts on host were work ProgresDB
+
+   On host where install ProgressDB.
+   a) Copy vst/*  to /opt/vst
+   b) Edit /opt/vst/db_vst.sh, replace with the values
+      [full path to _progress]/_progres -db [full path to db] -b -p /opt/vst/db_vst.p -T [path to temp dir] -param $1
+      for example
+      /opt/dlc/_progres -db /db/mydb -b -p /opt/vst/db_vst.p -T /tmp -param $1
+   c) Edit /opt/vst/session_set.sh, set you path to DLC.
+   d) Check scripts, run
+       /opt/vst/db_vst.p Connections
+ 
+      will show number of connections to base     
+   e) Copy zabbix_agent.d/* /etc/zabbix/zabbix_agent.d/
+   f) Restart Zabbix agent.
+
+3. Uploading Zabbix template using Zabbix frontend.
+
+  Template_App_ProgressDB.xml
+
+4. Link template to host.
+
+   Link "Template App ProgressDB" to Progress DB host.
